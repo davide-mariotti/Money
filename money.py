@@ -3,12 +3,13 @@ import csv
 import hashlib
 import io
 import json
+import os
 import re
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
-DATA = Path(__file__).parent / "data"
+DATA = Path(os.environ.get("MONEY_DATA") or Path(__file__).parent / "data")  # desktop.py sets it for the exe
 INBOX = DATA / "nuovi"  # drop new statements here (or anywhere in data/): import files them by content
 ARCHIVE = DATA / "archivio"  # conflicts (same period, different content): never imported
 DB = DATA / "money.db"
