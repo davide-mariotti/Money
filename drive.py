@@ -109,11 +109,13 @@ def put(data, mime, name=None, parent=None, fid=None):
 
 
 def backup():
-    """Everything git doesn't track (data/ with the PDFs, local notes), one zip. New PC: git clone, then unzip it in the
-    repo folder. OAuth token included (the user wants it: a new PC works at once while it is valid)."""
+    """Every file GitHub doesn't have, one zip: untracked and ignored files (data/ with the PDFs, local notes) plus
+    tracked files changed since the last push. New PC: git clone, then unzip it in the repo folder = the exact same
+    state. OAuth token included (the user wants it: a new PC works at once while it is valid)."""
     repo, buf = money.DATA.parent, io.BytesIO()
-    local = subprocess.run(["git", "ls-files", "-z", "--others"], cwd=repo, capture_output=True, encoding="utf-8",
-                           check=True).stdout.split("\0")
+    git = lambda *a: subprocess.run(["git", *a], cwd=repo, capture_output=True, encoding="utf-8", check=True).stdout.split("\0")
+    local = {*git("ls-files", "-z", "--others"), *git("diff", "-z", "--name-only", "@{u}")}
+    rebuilt = {".venv", "node_modules", "__pycache__", "dist", "build"}  # recreated on the new PC (venv, npm, build)
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z, tempfile.TemporaryDirectory() as tmp:
         snap = Path(tmp) / "money.db"
         src, dst = sqlite3.connect(money.DB), sqlite3.connect(snap)
@@ -121,7 +123,7 @@ def backup():
         src.close(), dst.close()  # Windows can't delete the temp dir with the file still open
         z.write(snap, "data/money.db")
         for n in sorted(local):
-            if n and n != "data/money.db" and not n.startswith(".venv/") and "__pycache__/" not in n:
+            if n and n != "data/money.db" and (repo / n).is_file() and not rebuilt & set(n.split("/")):
                 z.write(repo / n, n, zipfile.ZIP_STORED if n.lower().endswith(".pdf") else None)
     return buf.getvalue()
 
