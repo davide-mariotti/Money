@@ -131,11 +131,12 @@ def load(split=True):
     if split:
         parts = df.description.map(money.mortgage_split)
         m = parts.notna() & df.category.fillna("").str.startswith("Casa > Mutuo")
-        cap = parts[m].map(lambda p: p[0])
-        capital = df[m].assign(amount=-cap, category=money.CAPITAL, id=df.id[m] + ":cap")
-        df.loc[m, "amount"] = df.amount[m] + cap
-        df.loc[m, "category"] = "Casa > Mutuo > Interessi e oneri"
-        df = pd.concat([df, capital]).sort_values("date", ascending=False, ignore_index=True)  # unique index
+        if m.any():  # no mortgage (most people): nothing to split, and pandas refuses an empty assignment
+            cap = parts[m].map(lambda p: p[0])
+            capital = df[m].assign(amount=-cap, category=money.CAPITAL, id=df.id[m] + ":cap")
+            df.loc[m, "amount"] = df.amount[m] + cap
+            df.loc[m, "category"] = "Casa > Mutuo > Interessi e oneri"
+            df = pd.concat([df, capital]).sort_values("date", ascending=False, ignore_index=True)  # unique index
     df["cat"] = df.category.fillna(UNCAT)
     lv = df.cat.str.split(SEP, expand=True).reindex(columns=range(3))
     df["macro"], df["micro"], df["sub"] = lv[0], lv[1], lv[2]
