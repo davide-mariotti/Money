@@ -186,7 +186,6 @@ DEFAULT_RULES = {
     "telecomitalia": "Casa > Utenze > Internet", "sddaenispa": "Casa > Utenze > Luce e gas",
     "acquespa": "Casa > Utenze > Acqua",
     "sddapaypal": "Shopping > PayPal senza dettaglio",  # PayPal funded by direct debit: merchant not shown
-    "sarletciescaeni": "Trasporti > Carburante", "ciescapvapp": "Trasporti > Carburante",
     "poseni": "Trasporti > Carburante", "poscoeni": "Trasporti > Carburante", "distributor": "Trasporti > Carburante",
     "metano": "Trasporti > Carburante", "beyfin": "Trasporti > Carburante",
     "parcheggio": "Trasporti > Parcheggi", "easypark": "Trasporti > Parcheggi", "flowbird": "Trasporti > Parcheggi",

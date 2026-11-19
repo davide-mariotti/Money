@@ -6,18 +6,8 @@ data/
 __pycache__/
 .venv/
 .claude/
-# samples: synthetic layouts and public fac-simile with text go on git; image-only copies, third-party
-# fixtures (GPL/AGPL) and synthetics that may still name real counterparties stay local
-!samples/**/*.pdf
-samples/export/*
-!samples/export/formati.md
-samples/**/*.webp
-samples/bollette/*facsimile*.pdf
-!samples/bollette/estra_dual_facsimile.pdf
-samples/bollette/engie_dual_guida-2025.pdf
-samples/estratti/bnl_*
-samples/estratti/mediolanum_*
-samples/estratti/mps_conto-*
+# samples: the documents used to build new readers (official fac-simile and synthetic statements) stay on this PC
+samples/
 dist/
 build/
 build.log
